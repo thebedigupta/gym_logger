@@ -1,0 +1,179 @@
+.workout-card {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s;
+}
+
+.workout-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.1);
+}
+
+.skip-day-card {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+  border: 2px dashed #ff9800;
+}
+
+.skip-day-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.skip-icon {
+  font-size: 2.5rem;
+}
+
+.skip-info h3 {
+  margin: 0;
+  color: #ff9800;
+  font-size: 1.3rem;
+}
+
+.skip-date {
+  margin: 5px 0 0 0;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #444;
+}
+
+.exercise-name {
+  margin: 0;
+  color: #667eea;
+  font-size: 1.3rem;
+}
+
+.workout-date {
+  margin: 5px 0 0 0;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 6px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+}
+
+.edit-btn {
+  background: #ff9800;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+}
+
+.delete-btn {
+  background: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+  background: #333;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  margin: 5px 0 0 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.notes-section {
+  background: #333;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+}
+
+.notes-label {
+  margin: 0 0 8px 0;
+  font-size: 0.75rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notes-text {
+  margin: 0;
+  color: #ccc;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-actions {
+    width: 100%;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    flex: 1;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .skip-day-content {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .skip-day-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
