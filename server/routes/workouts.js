@@ -4,6 +4,28 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
+// Helper function to format date and time in 12-hour format
+const formatWorkoutDateTime = (workout) => {
+  if (!workout.date) return workout;
+
+  const date = new Date(workout.date);
+  const dateStr = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  const timeStr = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return {
+    ...workout.toObject(),
+    displayDate: `${dateStr} at ${timeStr}`,
+  };
+};
+
 // Middleware to verify token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -29,7 +51,10 @@ router.get("/", verifyToken, async (req, res) => {
     const workouts = await Workout.find({ userId: req.userId }).sort({
       date: -1,
     });
-    res.json(workouts);
+    const formattedWorkouts = workouts.map((workout) =>
+      formatWorkoutDateTime(workout)
+    );
+    res.json(formattedWorkouts);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -45,7 +70,8 @@ router.get("/:id", verifyToken, async (req, res) => {
     if (!workout) {
       return res.status(404).json({ message: "Workout not found" });
     }
-    res.json(workout);
+    const formattedWorkout = formatWorkoutDateTime(workout);
+    res.json(formattedWorkout);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -67,7 +93,8 @@ router.post("/", verifyToken, async (req, res) => {
 
   try {
     const newWorkout = await workout.save();
-    res.status(201).json(newWorkout);
+    const formattedWorkout = formatWorkoutDateTime(newWorkout);
+    res.status(201).json(formattedWorkout);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -94,7 +121,8 @@ router.put("/:id", verifyToken, async (req, res) => {
     if (req.body.skipDay !== undefined) workout.skipDay = req.body.skipDay;
 
     const updatedWorkout = await workout.save();
-    res.json(updatedWorkout);
+    const formattedWorkout = formatWorkoutDateTime(updatedWorkout);
+    res.json(formattedWorkout);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

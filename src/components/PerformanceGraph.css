@@ -24,6 +24,7 @@
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
 .stat-value {
@@ -50,6 +51,31 @@
   font-size: 1rem;
 }
 
+/* Tablets (768px to 1024px) */
+@media (max-width: 1024px) {
+  .stats-summary {
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .chart-container h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+}
+
+/* Mobile (up to 768px) */
 @media (max-width: 768px) {
   .stats-summary {
     grid-template-columns: 1fr;
@@ -60,7 +86,65 @@
     padding: 12px;
   }
 
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
   .stat-value {
     font-size: 1.4rem;
+  }
+
+  .chart-container {
+    margin-bottom: 15px;
+  }
+
+  .chart-container h3 {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+
+  .no-data {
+    padding: 30px 15px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Small Mobile (up to 480px) */
+@media (max-width: 480px) {
+  .performance-graph {
+    gap: 15px;
+  }
+
+  .stats-summary {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    margin-bottom: 3px;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .chart-container {
+    margin-bottom: 12px;
+  }
+
+  .chart-container h3 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .no-data {
+    padding: 25px 12px;
+    font-size: 0.85rem;
   }
 }

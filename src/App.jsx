@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import './App.css'
@@ -31,13 +32,13 @@ function App() {
   }
 
   return (
-    <>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       {!user ? (
         <LandingPage onLoginSuccess={setUser} />
       ) : (
         <Dashboard user={user} onLogout={handleLogout} />
       )}
-    </>
+    </GoogleOAuthProvider>
   )
 }
 

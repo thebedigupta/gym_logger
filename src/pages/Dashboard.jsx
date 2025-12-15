@@ -4,16 +4,29 @@ import WorkoutList from '../components/WorkoutList'
 import PerformanceGraph from '../components/PerformanceGraph'
 import './Dashboard.css'
 
+// Helper function to get initials from name
+const getInitials = (name) => {
+  return name
+    .split(' ')
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 export default function Dashboard({ user, onLogout }) {
-  const [workouts, setWorkouts] = useState([])
+  const [allWorkouts, setAllWorkouts] = useState([])
+  const [displayedWorkouts, setDisplayedWorkouts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showSkipDay, setShowSkipDay] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const WORKOUTS_PER_PAGE = 10
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
   const token = localStorage.getItem('token')
 
-  // Fetch all workouts
+  // Fetch all workouts (only once on mount)
   const fetchWorkouts = async () => {
     setLoading(true)
     setError('')
@@ -25,13 +38,32 @@ export default function Dashboard({ user, onLogout }) {
       })
       if (!response.ok) throw new Error('Failed to fetch workouts')
       const data = await response.json()
-      setWorkouts(data)
+      setAllWorkouts(data)
+      setCurrentPage(1)
+      updateDisplayedWorkouts(data, 1)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
   }
+
+  // Update displayed workouts based on current page
+  const updateDisplayedWorkouts = (workoutsList, page) => {
+    const startIndex = (page - 1) * WORKOUTS_PER_PAGE
+    const endIndex = startIndex + WORKOUTS_PER_PAGE
+    setDisplayedWorkouts(workoutsList.slice(0, endIndex))
+  }
+
+  // Load more workouts
+  const loadMore = () => {
+    const nextPage = currentPage + 1
+    setCurrentPage(nextPage)
+    updateDisplayedWorkouts(allWorkouts, nextPage)
+  }
+
+  // Check if there are more workouts to load
+  const hasMore = displayedWorkouts.length < allWorkouts.length
 
   // Add a new workout
   const handleAddWorkout = async (workout) => {
@@ -46,7 +78,10 @@ export default function Dashboard({ user, onLogout }) {
       })
       if (!response.ok) throw new Error('Failed to add workout')
       const newWorkout = await response.json()
-      setWorkouts([newWorkout, ...workouts])
+      const updated = [newWorkout, ...allWorkouts]
+      setAllWorkouts(updated)
+      setCurrentPage(1)
+      updateDisplayedWorkouts(updated, 1)
     } catch (err) {
       setError(err.message)
     }
@@ -68,7 +103,10 @@ export default function Dashboard({ user, onLogout }) {
       })
       if (!response.ok) throw new Error('Failed to skip day')
       const newSkip = await response.json()
-      setWorkouts([newSkip, ...workouts])
+      const updated = [newSkip, ...allWorkouts]
+      setAllWorkouts(updated)
+      setCurrentPage(1)
+      updateDisplayedWorkouts(updated, 1)
       setShowSkipDay(false)
     } catch (err) {
       setError(err.message)
@@ -88,7 +126,10 @@ export default function Dashboard({ user, onLogout }) {
       })
       if (!response.ok) throw new Error('Failed to update workout')
       const data = await response.json()
-      setWorkouts(workouts.map(w => w._id === id ? data : w))
+      const updated = allWorkouts.map(w => w._id === id ? data : w)
+      setAllWorkouts(updated)
+      setCurrentPage(1)
+      updateDisplayedWorkouts(updated, 1)
     } catch (err) {
       setError(err.message)
     }
@@ -104,7 +145,10 @@ export default function Dashboard({ user, onLogout }) {
         }
       })
       if (!response.ok) throw new Error('Failed to delete workout')
-      setWorkouts(workouts.filter(w => w._id !== id))
+      const updated = allWorkouts.filter(w => w._id !== id)
+      setAllWorkouts(updated)
+      setCurrentPage(1)
+      updateDisplayedWorkouts(updated, 1)
     } catch (err) {
       setError(err.message)
     }
@@ -122,10 +166,13 @@ export default function Dashboard({ user, onLogout }) {
           <h1>💪 Gym Logger</h1>
           <div className="user-section">
             <div className="user-info">
-              {user.profilePicture && (
-                <img src={user.profilePicture} alt={user.name} className="user-avatar" />
-              )}
-              <span className="user-name">{user.name}</span>
+              <div className="user-avatar-initials">
+                {getInitials(user.name)}
+              </div>
+              <div className="user-details">
+                <span className="user-name">{user.name}</span>
+                <span className="user-email">{user.email}</span>
+              </div>
             </div>
             <button onClick={onLogout} className="logout-btn">Logout</button>
           </div>
@@ -166,7 +213,7 @@ export default function Dashboard({ user, onLogout }) {
           <div className="graph-section">
             <div className="card">
               <h2>Performance Overview</h2>
-              <PerformanceGraph workouts={workouts} />
+              <PerformanceGraph workouts={allWorkouts} />
             </div>
           </div>
         </div>
@@ -176,22 +223,34 @@ export default function Dashboard({ user, onLogout }) {
           <div className="card">
             <h2>
               Workout History
-              {workouts.length > 0 && (
-                <span className="workout-count">({workouts.length})</span>
+              {allWorkouts.length > 0 && (
+                <span className="workout-count">({allWorkouts.length})</span>
               )}
             </h2>
             {loading ? (
               <div className="loading">Loading workouts...</div>
-            ) : workouts.length === 0 ? (
+            ) : allWorkouts.length === 0 ? (
               <div className="empty-state">
                 <p>No workouts yet. Start logging your exercises!</p>
               </div>
             ) : (
-              <WorkoutList
-                workouts={workouts}
-                onUpdate={handleUpdateWorkout}
-                onDelete={handleDeleteWorkout}
-              />
+              <>
+                <WorkoutList
+                  workouts={displayedWorkouts}
+                  onUpdate={handleUpdateWorkout}
+                  onDelete={handleDeleteWorkout}
+                />
+                {hasMore && (
+                  <button className="load-more-btn" onClick={loadMore}>
+                    Load More ({displayedWorkouts.length}/{allWorkouts.length})
+                  </button>
+                )}
+                {!hasMore && allWorkouts.length > 0 && (
+                  <div className="all-loaded">
+                    ✓ All {allWorkouts.length} workouts loaded
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

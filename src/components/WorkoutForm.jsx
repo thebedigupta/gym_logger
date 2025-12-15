@@ -1,4 +1,15 @@
 import { useState } from 'react'
+import './WorkoutForm.css'
+
+// Convert 24h time to 12h format
+const convertTo12Hour = (time24) => {
+  if (!time24) return ''
+  const [hours, minutes] = time24.split(':')
+  let hour = parseInt(hours)
+  const ampm = hour >= 12 ? 'PM' : 'AM'
+  hour = hour % 12 || 12
+  return `${String(hour).padStart(2, '0')}:${minutes} ${ampm}`
+}
 
 export default function WorkoutForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -9,6 +20,7 @@ export default function WorkoutForm({ onSubmit }) {
     weightUnit: 'kg',
     notes: '',
     date: new Date().toISOString().split('T')[0],
+    time: new Date().toTimeString().slice(0, 5),
   })
 
   const [errors, setErrors] = useState({})
@@ -45,11 +57,13 @@ export default function WorkoutForm({ onSubmit }) {
       return
     }
 
+    const dateTime = new Date(`${formData.date}T${formData.time}`)
     onSubmit({
       ...formData,
       sets: parseInt(formData.sets),
       reps: parseInt(formData.reps),
       weight: parseFloat(formData.weight),
+      date: dateTime,
     })
 
     // Reset form
@@ -61,55 +75,58 @@ export default function WorkoutForm({ onSubmit }) {
       weightUnit: 'kg',
       notes: '',
       date: new Date().toISOString().split('T')[0],
+      time: new Date().toTimeString().slice(0, 5),
     })
     setErrors({})
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Exercise Name</label>
+    <form onSubmit={handleSubmit} className="workout-form">
+      <div className="form-group">
+        <label className="form-label">Exercise Name</label>
         <input
           type="text"
           name="exercise"
           value={formData.exercise}
           onChange={handleChange}
           placeholder="e.g., Bench Press"
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+          className="form-input"
         />
-        {errors.exercise && <span className="text-red-400 text-sm">{errors.exercise}</span>}
+        {errors.exercise && <span className="form-error">{errors.exercise}</span>}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Sets</label>
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">Sets</label>
           <input
             type="number"
             name="sets"
             value={formData.sets}
             onChange={handleChange}
             placeholder="3"
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+            min="1"
+            className="form-input"
           />
-          {errors.sets && <span className="text-red-400 text-sm">{errors.sets}</span>}
+          {errors.sets && <span className="form-error">{errors.sets}</span>}
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Reps</label>
+        <div className="form-group">
+          <label className="form-label">Reps</label>
           <input
             type="number"
             name="reps"
             value={formData.reps}
             onChange={handleChange}
             placeholder="10"
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+            min="1"
+            className="form-input"
           />
-          {errors.reps && <span className="text-red-400 text-sm">{errors.reps}</span>}
+          {errors.reps && <span className="form-error">{errors.reps}</span>}
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Weight</label>
-        <div className="flex gap-2">
+      <div className="form-group">
+        <label className="form-label">Weight</label>
+        <div className="weight-input-group">
           <input
             type="number"
             name="weight"
@@ -117,47 +134,62 @@ export default function WorkoutForm({ onSubmit }) {
             onChange={handleChange}
             placeholder="100"
             step="0.5"
-            className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+            min="0"
+            className="form-input"
           />
           <select
             name="weightUnit"
             value={formData.weightUnit}
             onChange={handleChange}
-            className="px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+            className="form-select"
           >
             <option value="kg">kg</option>
             <option value="lbs">lbs</option>
           </select>
         </div>
-        {errors.weight && <span className="text-red-400 text-sm">{errors.weight}</span>}
+        {errors.weight && <span className="form-error">{errors.weight}</span>}
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Date</label>
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
-        />
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Time (12-hour format)</label>
+          <div className="time-input-display">
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+              className="form-input"
+            />
+            <span className="time-12h-display">{convertTo12Hour(formData.time)}</span>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Notes (optional)</label>
+      <div className="form-group">
+        <label className="form-label">Notes (optional)</label>
         <textarea
           name="notes"
           value={formData.notes}
           onChange={handleChange}
           placeholder="How did it feel? Any observations?"
-          rows="3"
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+          className="form-textarea"
         />
       </div>
 
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 font-bold py-2 px-4 rounded transition-colors"
+        className="submit-btn"
       >
         Log Workout
       </button>

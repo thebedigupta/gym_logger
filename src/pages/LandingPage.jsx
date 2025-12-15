@@ -1,32 +1,50 @@
 import { useState } from 'react'
+import { GoogleLogin } from '@react-oauth/google'
+import jwtDecode from 'jwt-decode'
 import './LandingPage.css'
 
 export default function LandingPage({ onLoginSuccess }) {
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  // Demo login without Google OAuth for now
-  const handleDemoLogin = async () => {
+  const handleGoogleSuccess = async (credentialResponse) => {
     setIsLoading(true)
+    setError('')
     try {
-      // Create a demo user
-      const demoUser = {
-        _id: '123456789',
-        name: 'Demo User',
-        email: 'demo@example.com',
-        profilePicture: 'https://via.placeholder.com/40',
-      }
-
-      // Generate a fake token
-      const fakeToken = 'demo-token-' + Date.now()
+      const decoded = jwtDecode(credentialResponse.credential)
       
-      localStorage.setItem('token', fakeToken)
-      localStorage.setItem('user', JSON.stringify(demoUser))
-      onLoginSuccess(demoUser)
-    } catch (error) {
-      console.error('Login failed:', error)
+      // Send to backend
+      const response = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleId: decoded.sub,
+          email: decoded.email,
+          name: decoded.name,
+          profilePicture: decoded.picture,
+        }),
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
+        onLoginSuccess(data.user)
+      } else {
+        setError('Login failed. Please try again.')
+      }
+    } catch (err) {
+      console.error('Login failed:', err)
+      setError('Login failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleGoogleError = () => {
+    setError('Google login failed. Please try again.')
   }
 
   return (
@@ -53,14 +71,23 @@ export default function LandingPage({ onLoginSuccess }) {
 
           <div className="login-section">
             <p className="login-text">Get Started Today</p>
-            <button 
-              onClick={handleDemoLogin}
-              disabled={isLoading}
-              className="demo-login-btn"
-            >
-              {isLoading ? 'Loading...' : '🚀 Start Demo'}
-            </button>
-            <p className="demo-note">Click to start with demo account</p>
+            
+            {error && (
+              <div className="login-error">
+                {error}
+              </div>
+            )}
+
+            <div className="google-login-wrapper">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                text="signin_with"
+                size="large"
+              />
+            </div>
+            
+            <p className="login-note">Sign in with your Google account to get started</p>
           </div>
         </div>
       </div>

@@ -8,10 +8,50 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
     'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #0f0f0f;
+  color: white;
+}
+
+/* Ensure inputs don't zoom on iOS */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 1rem !important;
+  }
+}
+
+/* Remove default button styling */
+button {
+  font-family: inherit;
+}
+
+/* Improve link visibility */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
 }

@@ -1,22 +1,45 @@
 .workout-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.edit-mode-card {
-  background: #333;
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(102, 126, 234, 0.05);
+  border: 2px dashed #667eea;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.empty-text {
+  color: #aaa;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.edit-form-container {
+  background: linear-gradient(135deg, #2a2a2a 0%, #333 100%);
   border: 2px solid #667eea;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 15px;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
-.edit-form {
+.edit-form-title {
+  margin: 0 0 20px 0;
+  color: #667eea;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.edit-form-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .edit-form-group {
@@ -24,29 +47,76 @@
   flex-direction: column;
 }
 
-.edit-form-label {
-  font-size: 0.9rem;
-  color: #ccc;
-  margin-bottom: 5px;
-  font-weight: 500;
+.edit-form-group label {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .edit-form-input,
-.edit-form-textarea {
+.edit-form-input textarea {
   background: #444;
   border: 1px solid #555;
   color: white;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 12px;
+  border-radius: 8px;
   font-family: inherit;
   font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
 .edit-form-input:focus,
-.edit-form-textarea:focus {
+.edit-form-input textarea:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+  background: #4a4a4a;
+  box-shadow: 0 0 12px rgba(102, 126, 234, 0.3);
+}
+
+.edit-form-group textarea {
+  grid-column: 1 / -1;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.edit-form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.edit-btn-save,
+.edit-btn-cancel {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn-save {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+}
+
+.edit-btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
+}
+
+.edit-btn-cancel {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: white;
+}
+
+.edit-btn-cancel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(244, 67, 54, 0.3);
 }
 
 .edit-form-textarea {
@@ -92,11 +162,39 @@
 }
 
 @media (max-width: 768px) {
-  .edit-form {
-    grid-template-columns: 1fr;
+  .edit-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
-  .edit-form-textarea {
-    grid-column: 1;
+  .edit-form-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .edit-form-container {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .edit-form-title {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .edit-form-actions {
+    gap: 10px;
+  }
+
+  .edit-btn-save,
+  .edit-btn-cancel {
+    padding: 10px 16px;
+    font-size: 0.9rem;
   }
 }
