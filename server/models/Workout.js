@@ -47,7 +47,7 @@ const workoutSchema = new mongoose.Schema(
     rest: {
       type: Number,
       default: 60,
-      description: "Rest time between sets in seconds"
+      description: "Rest time between sets in seconds",
     },
     skipDay: {
       type: Boolean,
