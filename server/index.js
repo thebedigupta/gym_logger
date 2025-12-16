@@ -18,6 +18,11 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Server is running" });
+});
+
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/workouts", require("./routes/workouts"));
