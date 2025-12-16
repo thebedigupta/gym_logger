@@ -57,6 +57,26 @@
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
 }
 
 .workout-table {
@@ -272,74 +292,123 @@
 }
 
 @media (max-width: 768px) {
-  .col-notes {
+  .col-date {
     display: none;
   }
   
-  .workout-table th:nth-child(7),
-  .workout-table td:nth-child(7) {
+  .workout-table th:nth-child(6),
+  .workout-table td:nth-child(6) {
     display: none;
   }
   
-  .col-exercise { width: 30%; }
-  .col-sets { width: 12%; }
-  .col-reps { width: 12%; }
-  .col-weight { width: 14%; }
-  .col-rest { width: 10%; }
-  .col-date { width: 18%; }
-  .col-actions { width: 14%; }
+  .col-exercise { width: 28%; min-width: 100px; }
+  .col-sets { width: 11%; min-width: 45px; }
+  .col-reps { width: 11%; min-width: 45px; }
+  .col-weight { width: 11%; min-width: 55px; }
+  .col-rest { width: 11%; min-width: 60px; }
+  .col-notes { width: 18%; min-width: 70px; }
+  .col-actions { width: 10%; min-width: 50px; }
   
   .workout-table th,
   .workout-table td {
-    padding: 10px 6px;
-    font-size: 0.8rem;
+    padding: 10px 5px;
+    font-size: 0.75rem;
   }
   
   .exercise-name {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
   
   .badge {
-    padding: 2px 6px;
-    font-size: 0.7rem;
-    min-width: 30px;
+    padding: 2px 5px;
+    font-size: 0.65rem;
+    min-width: 28px;
+  }
+  
+  .notes-text {
+    max-width: 80px;
+    font-size: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
-  .col-notes,
-  .col-date,
-  .col-rest {
-    display: none;
-  }
+  .col-exercise { width: 18%; min-width: 75px; }
+  .col-sets { width: 12%; min-width: 50px; }
+  .col-reps { width: 12%; min-width: 50px; }
+  .col-weight { width: 12%; min-width: 55px; }
+  .col-rest { width: 12%; min-width: 60px; }
+  .col-date { width: 12%; min-width: 75px; }
+  .col-notes { width: 15%; min-width: 80px; }
+  .col-actions { width: 7%; min-width: 35px; }
   
-  .workout-table th:nth-child(5),
-  .workout-table th:nth-child(6),
-  .workout-table th:nth-child(7),
-  .workout-table td:nth-child(5),
-  .workout-table td:nth-child(6),
-  .workout-table td:nth-child(7) {
-    display: none;
+  .workout-table {
+    min-width: 750px;
   }
-  
-  .col-exercise { width: 35%; }
-  .col-sets { width: 15%; }
-  .col-reps { width: 15%; }
-  .col-weight { width: 15%; }
-  .col-actions { width: 20%; }
   
   .workout-table th,
   .workout-table td {
-    padding: 8px 4px;
-    font-size: 0.75rem;
+    padding: 10px 5px;
+    font-size: 0.68rem;
+  }
+  
+  .exercise-name {
+    font-size: 0.68rem;
+  }
+  
+  .badge {
+    padding: 3px 5px;
+    font-size: 0.62rem;
+    min-width: 26px;
+  }
+  
+  .notes-text {
+    font-size: 0.68rem;
+    max-width: 75px;
   }
   
   .btn-edit,
   .btn-delete,
   .btn-save,
   .btn-cancel {
-    padding: 4px 6px;
-    font-size: 1rem;
+    padding: 3px 4px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Extra small mobile (up to 360px) */
+@media (max-width: 360px) {
+  .col-exercise { width: 26%; min-width: 85px; }
+  .col-sets { width: 11%; min-width: 45px; }
+  .col-reps { width: 11%; min-width: 45px; }
+  .col-weight { width: 11%; min-width: 50px; }
+  .col-rest { width: 11%; min-width: 55px; }
+  .col-date { width: 11%; min-width: 70px; }
+  .col-notes { width: 13%; min-width: 75px; }
+  .col-actions { width: 9%; min-width: 45px; }
+  
+  .workout-table {
+    min-width: 550px;
+  }
+  
+  .workout-table th,
+  .workout-table td {
+    padding: 8px 4px;
+    font-size: 0.65rem;
+  }
+  
+  .exercise-name {
+    font-size: 0.65rem;
+  }
+  
+  .badge {
+    padding: 2px 4px;
+    font-size: 0.6rem;
+    min-width: 24px;
+  }
+  
+  .notes-text {
+    font-size: 0.65rem;
+    max-width: 60px;
   }
 }
 

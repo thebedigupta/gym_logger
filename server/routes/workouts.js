@@ -9,20 +9,29 @@ const formatWorkoutDateTime = (workout) => {
   if (!workout.date) return workout;
 
   const date = new Date(workout.date);
-  const dateStr = date.toLocaleDateString("en-US", {
+  
+  // Add 5.5 hours to convert from UTC to India timezone for display
+  const indiaDate = new Date(date.getTime() + 5.5 * 60 * 60 * 1000);
+  
+  const dateStr = indiaDate.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
-  const timeStr = date.toLocaleTimeString("en-US", {
+  const timeStr = indiaDate.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
   });
 
+  // Return with original UTC date but with timezone offset annotation
+  // So frontend knows this is India time
+  const isoWithTz = indiaDate.toISOString().split('Z')[0] + '+05:30'
+
   return {
     ...workout.toObject(),
     displayDate: `${dateStr} at ${timeStr}`,
+    date: isoWithTz,  // Override date with timezone-aware string for frontend
   };
 };
 
@@ -79,6 +88,11 @@ router.get("/:id", verifyToken, async (req, res) => {
 
 // Create a new workout
 router.post("/", verifyToken, async (req, res) => {
+  // Convert from ISO string with +05:30 to UTC Date object
+  // 2025-12-17T14:30:00+05:30 means 14:30 in India time
+  // We need to convert this to UTC: 14:30 - 5:30 = 09:00 UTC
+  const receivedDate = new Date(req.body.date)
+  
   const workout = new Workout({
     userId: req.userId,
     exercise: req.body.exercise,
@@ -87,7 +101,7 @@ router.post("/", verifyToken, async (req, res) => {
     weight: req.body.weight,
     weightUnit: req.body.weightUnit,
     rest: req.body.rest || 60,
-    date: req.body.date,
+    date: receivedDate,  // This will be stored as UTC in MongoDB
     notes: req.body.notes,
     skipDay: req.body.skipDay || false,
   });

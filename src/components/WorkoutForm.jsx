@@ -12,6 +12,22 @@ const convertTo12Hour = (time24) => {
 }
 
 export default function WorkoutForm({ onSubmit }) {
+  // Get today's date in LOCAL timezone (not UTC)
+  const getLocalDateString = () => {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const getLocalTimeString = () => {
+    const now = new Date()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    return `${hours}:${minutes}`
+  }
+
   const [formData, setFormData] = useState({
     exercise: '',
     sets: '',
@@ -20,8 +36,8 @@ export default function WorkoutForm({ onSubmit }) {
     weightUnit: 'kg',
     rest: '60',
     notes: '',
-    date: new Date().toISOString().split('T')[0],
-    time: new Date().toTimeString().slice(0, 5),
+    date: getLocalDateString(),
+    time: getLocalTimeString(),
   })
 
   const [errors, setErrors] = useState({})
@@ -58,14 +74,17 @@ export default function WorkoutForm({ onSubmit }) {
       return
     }
 
-    const dateTime = new Date(`${formData.date}T${formData.time}`)
+    // Send date and time as ISO string with India timezone offset (+05:30)
+    // This ensures the exact local time the user selected is preserved
+    const isoString = `${formData.date}T${formData.time}:00+05:30`
+    
     onSubmit({
       ...formData,
       sets: parseInt(formData.sets),
       reps: parseInt(formData.reps),
       weight: parseFloat(formData.weight),
       rest: parseInt(formData.rest),
-      date: dateTime,
+      date: isoString,
     })
 
     // Reset form
@@ -77,8 +96,8 @@ export default function WorkoutForm({ onSubmit }) {
       weightUnit: 'kg',
       rest: '60',
       notes: '',
-      date: new Date().toISOString().split('T')[0],
-      time: new Date().toTimeString().slice(0, 5),
+      date: getLocalDateString(),
+      time: getLocalTimeString(),
     })
     setErrors({})
   }

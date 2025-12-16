@@ -4,6 +4,9 @@ import './WorkoutList.css'
 export default function WorkoutList({ workouts, onUpdate, onDelete }) {
   const [editingId, setEditingId] = useState(null)
   const [editData, setEditData] = useState({})
+  const [swipedId, setSwipedId] = useState(null)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
 
   const handleEditClick = (workout) => {
     setEditingId(workout._id)
@@ -28,9 +31,36 @@ export default function WorkoutList({ workouts, onUpdate, onDelete }) {
     setEditData({})
   }
 
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = (e, workoutId) => {
+    setTouchEnd(e.changedTouches[0].clientX)
+    handleSwipe(workoutId)
+  }
+
+  const handleSwipe = (workoutId) => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      setSwipedId(workoutId)
+    } else if (isRightSwipe) {
+      setSwipedId(null)
+    }
+  }
+
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { 
+    // dateString comes as 2025-12-17T14:30:00+05:30 from backend
+    // Extract just the date part (YYYY-MM-DD)
+    const datePart = dateString.split('T')[0]
+    const [year, month, day] = datePart.split('-').map(Number)
+    
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', { 
       weekday: 'short',
       month: 'short', 
       day: 'numeric', 
@@ -82,7 +112,12 @@ export default function WorkoutList({ workouts, onUpdate, onDelete }) {
                   </thead>
                   <tbody>
                     {dayWorkouts.map((workout) => (
-                      <tr key={workout._id} className={editingId === workout._id ? 'editing-row' : ''}>
+                      <tr 
+                        key={workout._id} 
+                        className={`${editingId === workout._id ? 'editing-row' : ''} ${swipedId === workout._id ? 'swiped-row' : ''}`}
+                        onTouchStart={handleTouchStart}
+                        onTouchEnd={(e) => handleTouchEnd(e, workout._id)}
+                      >
                         {editingId === workout._id ? (
                           <>
                             <td className="col-exercise">
