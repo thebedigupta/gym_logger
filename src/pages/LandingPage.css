@@ -79,17 +79,31 @@
 .google-login-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .google-login-wrapper > div {
   width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
 }
 
-.google-login-wrapper button {
+.google-login-wrapper button,
+.google-login-wrapper div[role="button"] {
   width: 100% !important;
   height: 50px !important;
-  font-size: 1.1rem !important;
+  font-size: 1rem !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.google-login-wrapper button span {
+  font-size: 1rem !important;
 }
 
 .login-error {
