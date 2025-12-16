@@ -76,6 +76,38 @@
   font-weight: 500;
 }
 
+.google-login-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.google-login-wrapper > div {
+  width: 100% !important;
+}
+
+.google-login-wrapper button {
+  width: 100% !important;
+  height: 50px !important;
+  font-size: 1.1rem !important;
+}
+
+.login-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  border: 1px solid #fcc;
+}
+
+.login-note {
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 10px;
+}
+
 .demo-login-btn {
   width: 100%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
