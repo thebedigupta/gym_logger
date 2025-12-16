@@ -18,6 +18,7 @@ export default function WorkoutForm({ onSubmit }) {
     reps: '',
     weight: '',
     weightUnit: 'kg',
+    rest: '60',
     notes: '',
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
@@ -63,6 +64,7 @@ export default function WorkoutForm({ onSubmit }) {
       sets: parseInt(formData.sets),
       reps: parseInt(formData.reps),
       weight: parseFloat(formData.weight),
+      rest: parseInt(formData.rest),
       date: dateTime,
     })
 
@@ -73,6 +75,7 @@ export default function WorkoutForm({ onSubmit }) {
       reps: '',
       weight: '',
       weightUnit: 'kg',
+      rest: '60',
       notes: '',
       date: new Date().toISOString().split('T')[0],
       time: new Date().toTimeString().slice(0, 5),
@@ -148,6 +151,19 @@ export default function WorkoutForm({ onSubmit }) {
           </select>
         </div>
         {errors.weight && <span className="form-error">{errors.weight}</span>}
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Rest Between Sets (seconds)</label>
+        <input
+          type="number"
+          name="rest"
+          value={formData.rest}
+          onChange={handleChange}
+          placeholder="60"
+          min="0"
+          className="form-input"
+        />
       </div>
 
       <div className="form-row">

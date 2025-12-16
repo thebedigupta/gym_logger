@@ -86,6 +86,7 @@ router.post("/", verifyToken, async (req, res) => {
     reps: req.body.reps,
     weight: req.body.weight,
     weightUnit: req.body.weightUnit,
+    rest: req.body.rest || 60,
     date: req.body.date,
     notes: req.body.notes,
     skipDay: req.body.skipDay || false,
@@ -116,6 +117,7 @@ router.put("/:id", verifyToken, async (req, res) => {
     if (req.body.reps) workout.reps = req.body.reps;
     if (req.body.weight) workout.weight = req.body.weight;
     if (req.body.weightUnit) workout.weightUnit = req.body.weightUnit;
+    if (req.body.rest !== undefined) workout.rest = req.body.rest;
     if (req.body.date) workout.date = req.body.date;
     if (req.body.notes !== undefined) workout.notes = req.body.notes;
     if (req.body.skipDay !== undefined) workout.skipDay = req.body.skipDay;
