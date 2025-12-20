@@ -21,6 +21,7 @@ export default function Dashboard({ user, onLogout }) {
   const [error, setError] = useState('')
   const [showSkipDay, setShowSkipDay] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const WORKOUTS_PER_PAGE = 10
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
@@ -160,11 +161,15 @@ export default function Dashboard({ user, onLogout }) {
 
   return (
     <div className="dashboard">
-      {/* Header */}
+      {/* Minimal Mobile Header */}
       <header className="dashboard-header">
         <div className="header-content">
-          <h1>💪 Gym Logger</h1>
-          <div className="user-section">
+          <div className="header-left">
+            <h1>💪 Gym Logger</h1>
+          </div>
+          
+          {/* Desktop User Section */}
+          <div className="user-section desktop-only">
             <div className="user-info">
               <div className="user-avatar-initials">
                 {getInitials(user.name)}
@@ -176,7 +181,40 @@ export default function Dashboard({ user, onLogout }) {
             </div>
             <button onClick={onLogout} className="logout-btn">Logout</button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="mobile-menu-btn mobile-only"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu">
+            <div className="mobile-user-info">
+              <div className="user-avatar-initials">
+                {getInitials(user.name)}
+              </div>
+              <div className="user-details">
+                <span className="user-name">{user.name}</span>
+                <span className="user-email">{user.email}</span>
+              </div>
+            </div>
+            <button 
+              onClick={() => {
+                onLogout()
+                setMobileMenuOpen(false)
+              }} 
+              className="logout-btn mobile-logout"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="dashboard-main">
