@@ -1,6 +1,6 @@
-# Gym Logger 💪
+# Localhost Gym 🏋️
 
-A MERN stack web application to track gym workouts, exercises, and fitness progress.
+A MERN stack web application to track gym workouts, exercises, and fitness progress—built web-first with full data ownership (CSV/PDF export).
 
 **Status:** ✅ Production Ready
 
@@ -18,6 +18,19 @@ A MERN stack web application to track gym workouts, exercises, and fitness progr
 - ✅ **Notes & Details** - Add personal notes to each workout
 - ✅ **Dark Mode UI** - Modern dark interface with Tailwind CSS
 - ✅ **Fully Responsive** - Works on desktop, tablet, and mobile
+- ✅ **Data Export (CSV & PDF)** - One-click exports from the dashboard (desktop + mobile)
+- ✅ **Web-first onboarding** - New hero/landing layout with clean navigation and highlights
+- ✅ **Privacy-first** - No ads, no dark patterns, your data stays portable
+
+---
+
+## 💡 Why Localhost Gym is Different
+
+- **Own your data**: Export anytime as CSV or PDF—no paywall, no lock-in
+- **Runs local-first**: Works against your own MongoDB; cloud optional
+- **Zero trackers**: No ads or growth popups; focused on workouts only
+- **Fast setup**: Single `.env` file; start both frontend/backend with one command
+- **Designed for flow**: Clean landing + mobile nav tuned for quick logging
 
 ---
 
@@ -51,20 +64,25 @@ npm install
 
 ### 2. Configure Environment Variables
 
-**Create `.env` in root directory:**
+**Create `.env` in the root directory (used by server and Vite):**
 
 ```bash
 JWT_SECRET=your-secret-key
 MONGODB_URI=mongodb://localhost:27017/gym_logger
 PORT=5000
-```
-
-**Create `.env.local` in root directory:**
-
-```bash
 VITE_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
 VITE_API_URL=http://localhost:5000
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_email@example.com
+SMTP_PASS=your_smtp_app_password
+FEEDBACK_TO=bedigupta76@gmail.com
+FEEDBACK_FROM="Localhost Gym <your_email@example.com>"
 ```
+
+`VITE_` variables are required for the React build to expose them to the client.
+Use an SMTP app password (e.g., Gmail App Password) for `SMTP_PASS` so feedback emails can be delivered.
 
 ### 3. Start MongoDB
 

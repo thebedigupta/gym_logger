@@ -26,6 +26,7 @@ app.get("/api/health", (req, res) => {
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/workouts", require("./routes/workouts"));
+app.use("/api/feedback", require("./routes/feedback"));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

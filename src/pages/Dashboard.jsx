@@ -77,6 +77,131 @@ export default function Dashboard({ user, onLogout }) {
   // Check if there are more workouts to load
   const hasMore = displayedWorkouts.length < allWorkouts.length
 
+  // Export workouts to CSV
+  const exportToCsv = () => {
+    if (!allWorkouts.length) {
+      setError('No workouts to export yet')
+      return
+    }
+
+    const headers = [
+      'Exercise',
+      'Sets',
+      'Reps',
+      'Weight',
+      'Weight Unit',
+      'Rest (sec)',
+      'Date',
+      'Notes',
+      'Skip Day',
+    ]
+
+    const rows = allWorkouts.map((w) => {
+      const volumeDate = w.date ? new Date(w.date).toISOString() : ''
+      return [
+        w.exercise || 'N/A',
+        w.sets ?? '',
+        w.reps ?? '',
+        w.weight ?? '',
+        w.weightUnit || '',
+        w.rest ?? '',
+        volumeDate,
+        w.notes || '',
+        w.skipDay ? 'Yes' : 'No',
+      ]
+    })
+
+    const escapeField = (field) => `"${String(field ?? '').replace(/"/g, '""')}"`
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map(escapeField).join(','))
+      .join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'workouts-export.csv'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  // Export workouts to PDF (uses dynamic import to avoid bundling unless clicked)
+  const exportToPdf = async () => {
+    if (!allWorkouts.length) {
+      setError('No workouts to export yet')
+      return
+    }
+
+    setError('')
+
+    try {
+      const getJsPdf = () => new Promise((resolve, reject) => {
+        if (window.jspdf?.jsPDF) {
+          resolve(window.jspdf.jsPDF)
+          return
+        }
+
+        const script = document.createElement('script')
+        script.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'
+        script.async = true
+        script.onload = () => {
+          if (window.jspdf?.jsPDF) {
+            resolve(window.jspdf.jsPDF)
+          } else {
+            reject(new Error('jsPDF failed to load'))
+          }
+        }
+        script.onerror = () => reject(new Error('Failed to load jsPDF'))
+        document.body.appendChild(script)
+      })
+
+      const JsPdfCtor = await getJsPdf()
+
+      const doc = new JsPdfCtor({ unit: 'pt', format: 'a4' })
+      const margin = 40
+      let y = margin
+      const lineHeight = 18
+      const maxY = doc.internal.pageSize.getHeight() - margin
+
+      const addLine = (text, isHeader = false) => {
+        if (y > maxY) {
+          doc.addPage()
+          y = margin
+        }
+        doc.setFont('helvetica', isHeader ? 'bold' : 'normal')
+        doc.text(text, margin, y)
+        y += lineHeight
+      }
+
+      addLine('Localhost Gym — Workouts Export', true)
+      addLine(`Exported: ${new Date().toLocaleString()}`)
+      addLine('')
+      addLine('Exercise | Sets | Reps | Weight | Unit | Rest(s) | Date | Notes | Skip', true)
+
+      allWorkouts.forEach((w) => {
+        const dateStr = w.date ? new Date(w.date).toLocaleString() : ''
+        const row = [
+          w.exercise || 'N/A',
+          w.sets ?? '',
+          w.reps ?? '',
+          w.weight ?? '',
+          w.weightUnit || '',
+          w.rest ?? '',
+          dateStr,
+          (w.notes || '').slice(0, 80),
+          w.skipDay ? 'Yes' : 'No',
+        ].join(' | ')
+        addLine(row)
+      })
+
+      doc.save('workouts-export.pdf')
+    } catch (err) {
+      setError(err.message || 'Failed to export PDF')
+    }
+  }
+
   // Add a new workout
   const handleAddWorkout = async (workout) => {
     try {
@@ -188,7 +313,7 @@ export default function Dashboard({ user, onLogout }) {
       <header className="dashboard-header">
         <div className="header-content">
           <div className="header-left">
-            <h1>💪 Gym Logger</h1>
+            <h1>🏋️ Localhost Gym</h1>
           </div>
           
           {/* Desktop User Section */}
@@ -202,6 +327,8 @@ export default function Dashboard({ user, onLogout }) {
                 <span className="user-email">{user.email}</span>
               </div>
             </div>
+              <button onClick={exportToPdf} className="export-btn secondary">Export PDF</button>
+            <button onClick={exportToCsv} className="export-btn">Export CSV</button>
             <button onClick={onLogout} className="logout-btn">Logout</button>
           </div>
 
@@ -227,6 +354,24 @@ export default function Dashboard({ user, onLogout }) {
                 <span className="user-email">{user.email}</span>
               </div>
             </div>
+            <button 
+              onClick={() => {
+                exportToCsv()
+                setMobileMenuOpen(false)
+              }}
+              className="export-btn mobile-export"
+            >
+              Export CSV
+            </button>
+            <button 
+              onClick={() => {
+                exportToPdf()
+                setMobileMenuOpen(false)
+              }}
+              className="export-btn mobile-export secondary"
+            >
+              Export PDF
+            </button>
             <button 
               onClick={() => {
                 onLogout()
