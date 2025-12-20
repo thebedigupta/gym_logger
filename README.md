@@ -1,180 +1,313 @@
 # Gym Logger 💪
 
-A MERN stack web application to track your gym workouts, exercises, and fitness progress.
+A MERN stack web application to track gym workouts, exercises, and fitness progress.
 
-## Features
+**Status:** ✅ Production Ready
 
-- ✅ Log workouts with exercise name, sets, reps, and weight
-- ✅ Track workout history with dates
-- ✅ Add notes to your workouts
-- ✅ Edit and delete previous workouts
-- ✅ Calculate total volume for each workout
-- ✅ Support for both kg and lbs weight units
-- ✅ Dark mode UI with Tailwind CSS
-- ✅ Responsive design
+---
 
-## Tech Stack
+## 🎯 Features
 
-- **Frontend**: React 18, Vite, Tailwind CSS
-- **Backend**: Node.js, Express
-- **Database**: MongoDB
-- **Language**: JavaScript (No TypeScript)
+- ✅ **Google OAuth 2.0 Authentication** - Secure sign-in with Google
+- ✅ **Log Workouts** - Track exercise name, sets, reps, weight
+- ✅ **Comprehensive History** - View all past workouts
+- ✅ **Full CRUD Operations** - Create, Read, Update, Delete workouts
+- ✅ **Multiple Units Support** - Both kg and lbs weight units
+- ✅ **Skip Day Tracking** - Mark rest/skip days
+- ✅ **Smart Date Formatting** - India timezone (+05:30) with 12-hour format
+- ✅ **Notes & Details** - Add personal notes to each workout
+- ✅ **Dark Mode UI** - Modern dark interface with Tailwind CSS
+- ✅ **Fully Responsive** - Works on desktop, tablet, and mobile
 
-## Prerequisites
+---
 
-- Node.js (v14 or higher)
-- MongoDB (local or Atlas)
+## 🚀 Tech Stack
+
+| Layer        | Technology                   | Purpose               |
+| ------------ | ---------------------------- | --------------------- |
+| **Frontend** | React 18, Vite, Tailwind CSS | UI & State Management |
+| **Backend**  | Node.js, Express.js          | API & Server          |
+| **Database** | MongoDB                      | Data Storage          |
+| **Auth**     | Google OAuth 2.0, JWT        | Secure Authentication |
+
+---
+
+## 📋 Prerequisites
+
+- Node.js v14+ (v18 recommended)
+- MongoDB 4.4+ (local or Atlas cloud)
 - npm or yarn
+- Google OAuth 2.0 Client ID
 
-## Installation
+---
 
-1. **Clone the repository**
+## ⚡ Quick Start
 
-```bash
-git clone <repository-url>
-cd gym_logger
-```
-
-2. **Install dependencies**
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-3. **Set up environment variables**
+### 2. Configure Environment Variables
+
+**Create `.env` in root directory:**
 
 ```bash
-cp .env.example .env
-```
-
-Edit `.env` and configure your MongoDB URI:
-
-```
+JWT_SECRET=your-secret-key
 MONGODB_URI=mongodb://localhost:27017/gym_logger
 PORT=5000
+```
+
+**Create `.env.local` in root directory:**
+
+```bash
+VITE_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
 VITE_API_URL=http://localhost:5000
 ```
 
-## Running the Application
+### 3. Start MongoDB
 
-### Development Mode
+```bash
+# macOS with Homebrew
+brew services start mongodb-community
+
+# Linux with systemctl
+sudo systemctl start mongod
+
+# Docker
+docker run -d -p 27017:27017 --name mongodb mongo
+```
+
+### 4. Run the Application
 
 ```bash
 npm run dev
 ```
 
-This will start both the backend server (port 5000) and the React development server (port 3000).
+This starts:
 
-### Individual Development
+- **Backend:** http://localhost:5000
+- **Frontend:** http://localhost:5173
 
-**Start the backend server:**
+### 5. Sign In
 
-```bash
-npm run server
-```
+Visit `http://localhost:5173` and click "Sign in with Google"
 
-**Start the React frontend (in another terminal):**
+---
 
-```bash
-npm run client
-```
-
-### Production Build
-
-```bash
-npm run build
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 gym_logger/
-├── server/
-│   ├── models/
-│   │   └── Workout.js          # MongoDB Workout schema
-│   ├── routes/
-│   │   └── workouts.js         # API routes
-│   └── index.js                # Express server setup
-├── src/
-│   ├── components/
-│   │   ├── WorkoutForm.jsx     # Form to log new workouts
-│   │   ├── WorkoutList.jsx     # Display all workouts
-│   │   └── WorkoutCard.jsx     # Individual workout card
-│   ├── App.jsx                 # Main app component
-│   ├── main.jsx                # Entry point
-│   └── index.css               # Global styles
-├── index.html                  # HTML entry point
-├── vite.config.js             # Vite configuration
-├── tailwind.config.js         # Tailwind CSS configuration
-├── postcss.config.js          # PostCSS configuration
-└── package.json               # Dependencies
-
+├── server/                 # Backend (Express.js)
+│   ├── index.js           # Main server file
+│   ├── models/            # Database models
+│   │   ├── User.js
+│   │   └── Workout.js
+│   └── routes/            # API routes
+│       ├── auth.js
+│       └── workouts.js
+├── src/                   # Frontend (React)
+│   ├── App.jsx
+│   ├── main.jsx
+│   ├── components/        # React components
+│   │   ├── WorkoutForm.jsx
+│   │   ├── WorkoutList.jsx
+│   │   ├── WorkoutCard.jsx
+│   │   └── PerformanceGraph.jsx
+│   └── pages/            # Page components
+│       ├── Dashboard.jsx
+│       └── LandingPage.jsx
+├── package.json
+├── README.md
+└── .env (create this)
 ```
 
-## API Endpoints
+---
 
-All endpoints are prefixed with `/api/workouts`
+## 🔐 API Endpoints
 
-- `GET /api/workouts` - Get all workouts
-- `GET /api/workouts/:id` - Get a single workout
-- `POST /api/workouts` - Create a new workout
-- `PUT /api/workouts/:id` - Update a workout
-- `DELETE /api/workouts/:id` - Delete a workout
+### Authentication
 
-## Usage
+```
+POST /api/auth/google
+  - Google OAuth sign-in
+  - Body: { googleId, email, name, profilePicture }
+  - Returns: { success, token, user }
 
-1. Fill in the workout form with:
+GET /api/auth/me
+  - Get current user
+  - Headers: Authorization: Bearer <token>
+```
 
-   - Exercise name (e.g., Bench Press)
-   - Number of sets
-   - Number of reps
-   - Weight lifted
-   - Weight unit (kg or lbs)
-   - Workout date
-   - Optional notes
+### Workouts
 
-2. Click "Log Workout" to save it to the database
+```
+GET /api/workouts
+  - Get all user's workouts
+  - Headers: Authorization: Bearer <token>
 
-3. View your workout history on the right side
+POST /api/workouts
+  - Create new workout
+  - Headers: Authorization: Bearer <token>
+  - Body: { exercise, sets, reps, weight, weightUnit, rest, notes, date }
 
-4. Click "Edit" to modify a workout or "Delete" to remove it
+GET /api/workouts/:id
+  - Get single workout
+  - Headers: Authorization: Bearer <token>
 
-## Features Explanation
+PUT /api/workouts/:id
+  - Update workout
+  - Headers: Authorization: Bearer <token>
+  - Body: { updated fields }
 
-- **Volume Calculation**: Automatically calculates total volume (Sets × Reps × Weight)
-- **Date Tracking**: All workouts are timestamped
-- **Edit Mode**: Switch any workout to edit mode to update its details
-- **Responsive Design**: Works on desktop and mobile devices
+DELETE /api/workouts/:id
+  - Delete workout
+  - Headers: Authorization: Bearer <token>
+```
 
-## Future Enhancements
+---
 
-- [ ] User authentication and profiles
-- [ ] Workout statistics and charts
-- [ ] Progress tracking over time
-- [ ] Exercise categories and templates
-- [ ] Mobile app version
-- [ ] Social features (share workouts)
-- [ ] AI-powered workout recommendations
+## 🔧 Development
 
-## Troubleshooting
+### Available Scripts
 
-**MongoDB Connection Error**
+```bash
+# Start development servers (backend + frontend)
+npm run dev
 
-- Ensure MongoDB is running locally or update `MONGODB_URI` with your Atlas connection string
+# Start only backend
+npm run server
 
-**Port Already in Use**
+# Start only frontend
+npm run client
 
-- Change the port in `.env` or kill the process using the port
+# Build for production
+npm run build
 
-**CORS Errors**
+# Preview production build
+npm run preview
+```
 
-- Ensure the backend server is running on port 5000
-- Check that `VITE_API_URL` is correctly set
+---
 
-## Contributing
+## 📝 Workout Data Model
 
-Feel free to fork, modify, and improve this project!
+```javascript
+{
+  _id: ObjectId,
+  userId: ObjectId,
+  exercise: String,       // e.g., "Bench Press"
+  sets: Number,          // e.g., 3
+  reps: Number,          // e.g., 10
+  weight: Number,        // e.g., 80
+  weightUnit: String,    // "kg" or "lbs"
+  rest: Number,          // Rest time in seconds
+  notes: String,         // Optional notes
+  date: Date,            // ISO 8601 format
+  skipDay: Boolean,      // Mark as rest day
+  createdAt: Date,
+  updatedAt: Date
+}
+```
 
-## License
+---
 
-MIT License - feel free to use this for personal or commercial projects.
+## 🌐 Google OAuth Setup
+
+### Get Your Client ID
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project
+3. Go to **APIs & Services > Credentials**
+4. Create **OAuth 2.0 Client ID** (Web Application)
+5. Add authorized origins:
+   - `http://localhost:5173`
+   - `http://localhost:3000`
+6. Add authorized redirect URIs:
+   - `http://localhost:5173/callback`
+7. Copy the **Client ID**
+
+### Add to `.env.local`
+
+```
+VITE_GOOGLE_CLIENT_ID=<your-client-id>
+VITE_API_URL=http://localhost:5000
+```
+
+---
+
+## 🚢 Deployment
+
+### Environment Variables for Production
+
+```
+JWT_SECRET=secure-random-string
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/gym_logger
+PORT=5000
+NODE_ENV=production
+```
+
+### Frontend
+
+```
+VITE_GOOGLE_CLIENT_ID=your-production-client-id
+VITE_API_URL=https://api.yourdomain.com
+```
+
+---
+
+## 📞 Troubleshooting
+
+### MongoDB Connection Error
+
+```bash
+# Check if MongoDB is running
+mongosh
+
+# Start MongoDB if not running
+brew services start mongodb-community  # macOS
+sudo systemctl start mongod            # Linux
+docker start mongodb                   # Docker
+```
+
+### Port Already in Use
+
+```bash
+# Kill process on port 5000 (backend)
+lsof -i :5000 | kill -9 <PID>
+
+# Kill process on port 5173 (frontend)
+lsof -i :5173 | kill -9 <PID>
+```
+
+### Google Sign-In Not Working
+
+1. Check Client ID is correct in `.env.local`
+2. Verify origin URL is added to Google Cloud Console
+3. Clear browser cookies and cache
+4. Try in incognito mode
+
+### CORS Errors
+
+- Ensure backend is running on port 5000
+- Check `.env` and `.env.local` are configured correctly
+- Verify `VITE_API_URL` points to correct backend
+
+---
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+---
+
+## 👨‍💻 Contributing
+
+Feel free to fork, create a branch, make changes, and submit a pull request.
+
+---
+
+**Last Updated:** December 20, 2025
+**Version:** 1.0.0

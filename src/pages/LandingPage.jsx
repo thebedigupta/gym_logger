@@ -10,7 +10,15 @@ export default function LandingPage({ onLoginSuccess }) {
   const handleGoogleSuccess = async (credentialResponse) => {
     setIsLoading(true)
     setError('')
+    
+    // Add a small delay to ensure Google popup is fully closed
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
     try {
+      if (!credentialResponse?.credential) {
+        throw new Error('No credential received from Google')
+      }
+
       const decoded = jwtDecode(credentialResponse.credential)
       
       // Send to backend
@@ -29,23 +37,28 @@ export default function LandingPage({ onLoginSuccess }) {
       })
 
       const data = await response.json()
-      if (data.success) {
+      if (data.success && data.token) {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
-        onLoginSuccess(data.user)
+        // Add a small delay before redirect to ensure storage is saved
+        setTimeout(() => {
+          onLoginSuccess(data.user)
+        }, 100)
       } else {
         setError('Login failed. Please try again.')
+        setIsLoading(false)
       }
     } catch (err) {
       console.error('Login failed:', err)
-      setError('Login failed. Please try again.')
-    } finally {
+      setError(err.message || 'Login failed. Please try again.')
       setIsLoading(false)
     }
   }
 
-  const handleGoogleError = () => {
-    setError('Google login failed. Please try again.')
+  const handleGoogleError = (error) => {
+    console.error('Google Login Error:', error)
+    setError('Google login failed. Please check your internet connection and try again.')
+    setIsLoading(false)
   }
 
   return (
@@ -85,6 +98,10 @@ export default function LandingPage({ onLoginSuccess }) {
                 onError={handleGoogleError}
                 text="signin_with"
                 size="large"
+                useOneTap={false}
+                auto_select={false}
+                ux_mode="popup"
+                hosted_domain=""
               />
             </div>
             

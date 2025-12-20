@@ -32,7 +32,16 @@ function App() {
   }
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider 
+      clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+      onScriptLoad={() => {
+        // Ensure Google Script is loaded properly
+        window.google?.accounts?.id?.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: () => {},
+        });
+      }}
+    >
       {!user ? (
         <LandingPage onLoginSuccess={setUser} />
       ) : (
