@@ -37,7 +37,18 @@ export default function Dashboard({ user, onLogout }) {
           'Authorization': `Bearer ${token}`
         }
       })
-      if (!response.ok) throw new Error('Failed to fetch workouts')
+      if (response.status === 401) {
+        setError('Session expired. Please sign in again.')
+        onLogout()
+        return
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        const apiMessage = errorData.message || 'Failed to fetch workouts'
+        throw new Error(apiMessage)
+      }
+
       const data = await response.json()
       setAllWorkouts(data)
       setCurrentPage(1)
@@ -157,6 +168,18 @@ export default function Dashboard({ user, onLogout }) {
 
   useEffect(() => {
     fetchWorkouts()
+  }, [])
+
+  // Close mobile menu when resizing to desktop widths
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   return (

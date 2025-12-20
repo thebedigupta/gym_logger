@@ -45,6 +45,14 @@
   display: none;
 }
 
+/* Force-hide mobile nav on desktop */
+@media (min-width: 769px) {
+  .mobile-only,
+  .mobile-menu {
+    display: none !important;
+  }
+}
+
 .mobile-menu-btn {
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -70,6 +78,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 20px;
   animation: slideDown 0.3s ease-out;
+  display: none;
 }
 
 @keyframes slideDown {
@@ -376,6 +385,10 @@
 
   .mobile-only {
     display: flex !important;
+  }
+
+  .mobile-menu {
+    display: block;
   }
 
   .dashboard-main {
