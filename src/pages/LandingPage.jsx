@@ -252,7 +252,7 @@ export default function LandingPage({ onLoginSuccess }) {
         <section className="lp-section" id="developer">
           <div className="lp-section-head">
             <p className="lp-pill">Behind the build</p>
-            <h2>Hi, I’m Bedi Gupta</h2>
+            <h2>Hi, Folks</h2>
             <p className="lp-section-sub">Full-stack dev obsessed with clean UX and reliable data handling.</p>
           </div>
           <div className="lp-grid two">
